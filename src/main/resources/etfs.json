@@ -1,0 +1,12 @@
+[
+  { "symbol": "VOO", "name": "Vanguard S&P 500 ETF" },
+  { "symbol": "SPY", "name": "SPDR S&P 500 ETF Trust" },
+  { "symbol": "QQQ", "name": "Invesco QQQ Trust" },
+  { "symbol": "DIA", "name": "SPDR Dow Jones Industrial Average ETF" },
+  { "symbol": "ARKK", "name": "ARK Innovation ETF" },
+  { "symbol": "VTI", "name": "Vanguard Total Stock Market ETF" },
+  { "symbol": "EFA", "name": "iShares MSCI EAFE ETF" },
+  { "symbol": "TLT", "name": "iShares 20+ Year Treasury Bond ETF" },
+  { "symbol": "GLD", "name": "SPDR Gold Shares" },
+  { "symbol": "XLE", "name": "Energy Select Sector SPDR Fund" }
+]

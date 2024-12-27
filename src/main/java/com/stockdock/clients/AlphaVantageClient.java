@@ -1,27 +1,27 @@
 package com.stockdock.clients;
 
+import com.stockdock.config.AlphaVantageProperties;
 import com.stockdock.dto.GlobalQuoteResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 
 @Component
 public class AlphaVantageClient {
 
-   private final WebClient webClient;
+   private final RestClient restClient;
    private final String apiKey;
 
-   public AlphaVantageClient(WebClient webClient, String apiKey) {
-      this.webClient = webClient;
-      this.apiKey = apiKey;
+   public AlphaVantageClient(RestClient restClient, AlphaVantageProperties properties) {
+      this.restClient = restClient;
+      this.apiKey = properties.getApiKey();
    }
 
    public GlobalQuoteResponse getQuote(String symbol) {
       String url = buildAlphaVantageUrl(symbol);
-      return webClient.get()
+      return restClient.get()
           .uri(url)
           .retrieve()
-          .bodyToMono(GlobalQuoteResponse.class) // Converts response to DTO
-          .block(); // Block for synchronous response
+          .body(GlobalQuoteResponse.class);
    }
 
    private String buildAlphaVantageUrl(String symbol) {
