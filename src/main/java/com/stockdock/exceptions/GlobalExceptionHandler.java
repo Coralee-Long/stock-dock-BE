@@ -1,6 +1,5 @@
-package com.stockdock.config;
+package com.stockdock.exceptions;
 
-import com.stockdock.exceptions.ApiRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
