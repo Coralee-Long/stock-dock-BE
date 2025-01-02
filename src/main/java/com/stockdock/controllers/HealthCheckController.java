@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/health")
-public class HealthController {
+public class HealthCheckController {
    /**
     * Basic health check endpoint.
     * @return A simple message confirming the application is running.

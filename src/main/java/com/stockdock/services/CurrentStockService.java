@@ -1,29 +1,29 @@
 package com.stockdock.services;
 
-import com.stockdock.clients.AlpacaClient;
+import com.stockdock.clients.CurrentStockClient;
 import com.stockdock.dto.StockQuote;
-import com.stockdock.dto.StockQuotesResponse;
+import com.stockdock.dto.StockQuotes;
 import com.stockdock.models.CurrentStock;
 import com.stockdock.repos.CurrentStockRepo;
 import org.springframework.stereotype.Service;
 
 @Service
-public class QuoteService {
+public class CurrentStockService {
 
-   private final AlpacaClient alpacaClient;
+   private final CurrentStockClient currentStockClient;
    private final CurrentStockRepo currentStockRepo;
 
-   public QuoteService(AlpacaClient alpacaClient, CurrentStockRepo currentStockRepo) {
-      this.alpacaClient = alpacaClient;
+   public CurrentStockService (CurrentStockClient currentStockClient, CurrentStockRepo currentStockRepo) {
+      this.currentStockClient = currentStockClient;
       this.currentStockRepo = currentStockRepo;
    }
 
    /**
     * Fetch all quotes for the predefined list of symbols from the Alpaca API.
-    * @return StockQuotesResponse containing the latest quotes for all predefined symbols.
+    * @return StockQuotes containing the latest quotes for all predefined symbols.
     */
-   public StockQuotesResponse fetchAllQuotes() {
-      return alpacaClient.getAllQuotes();
+   public StockQuotes fetchAllQuotes () {
+      return currentStockClient.getAllQuotes();
    }
 
    /**
@@ -31,8 +31,8 @@ public class QuoteService {
     * @param symbol The stock symbol to fetch (e.g., AAPL).
     * @return StockQuote containing the latest quote for the given symbol.
     */
-   public StockQuote fetchQuoteBySymbol(String symbol) {
-      return alpacaClient.getSingleQuoteBySymbol(symbol);
+   public StockQuote fetchQuoteBySymbol (String symbol) {
+      return currentStockClient.getSingleQuoteBySymbol(symbol);
    }
 
    /**
@@ -41,7 +41,7 @@ public class QuoteService {
     */
    public void saveAllQuotesToDb() {
       // Get all quotes from the API
-      StockQuotesResponse response = fetchAllQuotes();
+      StockQuotes response = fetchAllQuotes();
 
       // Map the quotes to CurrentStock objects and save to the database
       response.quotes().forEach((symbol, stockQuote) -> {

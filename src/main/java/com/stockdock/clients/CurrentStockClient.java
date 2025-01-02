@@ -3,18 +3,17 @@ package com.stockdock.clients;
 
 import com.stockdock.config.SymbolConfig;
 import com.stockdock.dto.StockQuote;
-import com.stockdock.dto.StockQuotesResponse;
+import com.stockdock.dto.StockQuotes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class AlpacaClient {
+public class CurrentStockClient {
 
    private final RestClient restClient;
    private final SymbolConfig symbolConfig; // Inject Symbols list
@@ -24,13 +23,13 @@ public class AlpacaClient {
    private final String baseUrl;
    private final String paperUrl;
 
-   public AlpacaClient (
+   public CurrentStockClient (
        SymbolConfig symbolConfig, // Add symbols list to constructor
        @Value("${alpaca.api.key}") String apiKey,
        @Value("${alpaca.api.secret}") String apiSecret,
        @Value("${alpaca.api.base.url}") String baseUrl,
        @Value("${alpaca.api.paper.url}") String paperUrl
-                       ) {
+                             ) {
       this.restClient = RestClient.builder().build();
       this.symbolConfig = symbolConfig;
       this.apiKey = apiKey;
@@ -40,7 +39,7 @@ public class AlpacaClient {
    }
 
    // Fetch single quote by symbol
-   public StockQuote getSingleQuoteBySymbol(String symbol) {
+   public StockQuote getSingleQuoteBySymbol (String symbol) {
       URI uri = UriComponentsBuilder.fromUriString(baseUrl)
           .path("/v2/stocks/{symbol}/snapshot") // Replace {symbol} dynamically
           .buildAndExpand(symbol)
@@ -59,7 +58,7 @@ public class AlpacaClient {
    }
 
    // Fetch all predefined quotes
-   public StockQuotesResponse getAllQuotes() {
+   public StockQuotes getAllQuotes () {
       // Use predefined list of symbols from Config
       List<String> symbols = symbolConfig.getPredefined();
       String symbolsListAsQueryParam = String.join(",", symbols);
@@ -81,6 +80,8 @@ public class AlpacaClient {
              httpHeaders.set("Accept", "application/json");
           })
           .retrieve()
-          .body(StockQuotesResponse.class); // Convert response to DTO
+          .body(StockQuotes.class); // Convert response to DTO
    }
+
+
 }

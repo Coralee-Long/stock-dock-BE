@@ -1,18 +1,18 @@
 package com.stockdock.controllers;
 
 import com.stockdock.dto.StockQuote;
-import com.stockdock.dto.StockQuotesResponse;
-import com.stockdock.services.QuoteService;
+import com.stockdock.dto.StockQuotes;
+import com.stockdock.services.CurrentStockService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/quotes")
-public class QuoteController {
+public class CurrentStockController {
 
-   private final QuoteService quoteService;
+   private final CurrentStockService currentStockService;
 
-   public QuoteController(QuoteService quoteService) {
-      this.quoteService = quoteService;
+   public CurrentStockController (CurrentStockService currentStockService) {
+      this.currentStockService = currentStockService;
    }
 
    /**
@@ -21,17 +21,17 @@ public class QuoteController {
     * @return StockQuote containing the latest quote for the given symbol.
     */
    @GetMapping("/{symbol}")
-   public StockQuote getSingleQuote(@PathVariable String symbol) {
-      return quoteService.fetchQuoteBySymbol(symbol);
+   public StockQuote getSingleQuote (@PathVariable String symbol) {
+      return currentStockService.fetchQuoteBySymbol(symbol);
    }
 
    /**
     * Endpoint to fetch all predefined stock quotes.
-    * @return StockQuotesResponse containing the latest quotes for all predefined symbols.
+    * @return StockQuotes containing the latest quotes for all predefined symbols.
     */
    @GetMapping("/all")
-   public StockQuotesResponse getAllQuotes() {
-      return quoteService.fetchAllQuotes();
+   public StockQuotes getAllQuotes () {
+      return currentStockService.fetchAllQuotes();
    }
 
    /**
@@ -40,7 +40,7 @@ public class QuoteController {
     */
    @PostMapping("/save")
    public String saveQuotes() {
-      quoteService.saveAllQuotesToDb();
+      currentStockService.saveAllQuotesToDb();
       return "All quotes saved to MongoDB.";
    }
 }
