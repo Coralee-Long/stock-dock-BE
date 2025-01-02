@@ -2,6 +2,7 @@
 package com.stockdock.clients;
 
 import com.stockdock.config.SymbolConfig;
+import com.stockdock.dto.StockQuote;
 import com.stockdock.dto.StockQuotesResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,25 @@ public class AlpacaClient {
       this.paperUrl = paperUrl;
    }
 
+   // Fetch single quote by symbol
+   public StockQuote getSingleQuoteBySymbol(String symbol) {
+      URI uri = UriComponentsBuilder.fromUriString(baseUrl)
+          .path("/v2/stocks/{symbol}/snapshot") // Replace {symbol} dynamically
+          .buildAndExpand(symbol)
+          .toUri();
+
+      // Make API Call
+      return restClient.get()
+          .uri(uri)
+          .headers(httpHeaders -> {
+             httpHeaders.set("APCA-API-KEY-ID", apiKey);
+             httpHeaders.set("APCA-API-SECRET-KEY", apiSecret);
+             httpHeaders.set("Accept", "application/json");
+          })
+          .retrieve()
+          .body(StockQuote.class); // Convert response to a StockQuote record
+   }
+
    // Fetch all predefined quotes
    public StockQuotesResponse getAllQuotes() {
       // Use predefined list of symbols from Config
@@ -45,8 +65,8 @@ public class AlpacaClient {
       String symbolsListAsQueryParam = String.join(",", symbols);
 
       // Build URI
-      URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl)
-          .path("/v2/stocks/quotes/latest") // Correct path
+      URI uri = UriComponentsBuilder.fromUriString(baseUrl)
+          .path("/v2/stocks/quotes/latest")
           .queryParam("symbols", symbolsListAsQueryParam) // Add symbols as query param
           .build()
           .toUri();
