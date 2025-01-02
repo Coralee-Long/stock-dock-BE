@@ -21,43 +21,46 @@ public class AlpacaClient {
    private final String apiKey;
    private final String apiSecret;
    private final String baseUrl;
+   private final String paperUrl;
 
-public AlpacaClient(
-    SymbolConfig symbolConfig, // Add symbols list to constructor
-    @Value ("${alpaca.api.key}") String apiKey,
-    @Value("${alpaca.api.secret}") String apiSecret,
-    @Value("${alpaca.api.base.url}") String baseUrl
-                   ) {
-   this.restClient = RestClient.builder().build();
-   this.symbolConfig = symbolConfig;
-   this.apiKey = apiKey;
-   this.apiSecret = apiSecret;
-   this.baseUrl = baseUrl;
-}
+   public AlpacaClient (
+       SymbolConfig symbolConfig, // Add symbols list to constructor
+       @Value("${alpaca.api.key}") String apiKey,
+       @Value("${alpaca.api.secret}") String apiSecret,
+       @Value("${alpaca.api.base.url}") String baseUrl,
+       @Value("${alpaca.api.paper.url}") String paperUrl
+                       ) {
+      this.restClient = RestClient.builder().build();
+      this.symbolConfig = symbolConfig;
+      this.apiKey = apiKey;
+      this.apiSecret = apiSecret;
+      this.baseUrl = baseUrl;
+      this.paperUrl = paperUrl;
+   }
 
-public StockQuotesResponse getAllQuotes() {
-   // Use predefined list of symbols from Config
-   List<String> symbols = symbolConfig.getPredefined();
+   // Fetch all predefined quotes
+   public StockQuotesResponse getAllQuotes() {
+      // Use predefined list of symbols from Config
+      List<String> symbols = symbolConfig.getPredefined();
+      String symbolsListAsQueryParam = String.join(",", symbols);
 
-   // Convert list of symbols into String
-   String symbolsListAsQueryParam = String.join(",", symbols);
+      // Build URI
+      URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl)
+          .path("/v2/stocks/quotes/latest") // Correct path
+          .queryParam("symbols", symbolsListAsQueryParam) // Add symbols as query param
+          .build()
+          .toUri();
+      System.out.println("Final URI: " + uri);
 
-   // Build URI
-   URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl)
-       .path("/v2/stocks/{symbol}/quotes")
-       .queryParam("symbols", symbolsListAsQueryParam) // Add symbols as query param
-       .build()
-       .toUri();
-
-   // Make API Call
-   return restClient.get()
-       .uri(uri)
-       .headers(httpHeaders -> {
-          httpHeaders.set("APCA-API-KEY-ID", apiKey);
-          httpHeaders.set("APCA-API-SECRET", apiSecret);
-          httpHeaders.set("Accept", "application/json");
-       })
-       .retrieve()
-       .body(StockQuotesResponse.class); // Convert the response to DTO
+      // Make API Call
+      return restClient.get()
+          .uri(uri)
+          .headers(httpHeaders -> {
+             httpHeaders.set("APCA-API-KEY-ID", apiKey);
+             httpHeaders.set("APCA-API-SECRET-KEY", apiSecret);
+             httpHeaders.set("Accept", "application/json");
+          })
+          .retrieve()
+          .body(StockQuotesResponse.class); // Convert response to DTO
    }
 }

@@ -2,22 +2,25 @@ package com.stockdock.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
+import jakarta.annotation.PostConstruct;
 
 import java.util.List;
 
-@Component
+@Configuration
 @ConfigurationProperties(prefix = "symbols")
 public class SymbolConfig {
    private List<String> predefined;
 
-   // Getter
    public List<String> getPredefined() {
       return predefined;
    }
 
-   // Setter
    public void setPredefined(List<String> predefined) {
       this.predefined = predefined;
+   }
+
+   @PostConstruct
+   public void debugSymbols() {
+      System.out.println("Loaded Symbols: " + predefined);
    }
 }
