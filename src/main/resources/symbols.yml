@@ -1,0 +1,28 @@
+# src/main/resources/symbols.yml
+symbols:
+  predefined:
+    - AAPL
+    - MSFT
+    - AMZN
+    - NVDA
+    - TSLA
+    - META
+    - GOOGL
+    - GOOG
+    - BRK.B
+    - UNH
+    - XOM
+    - JNJ
+    - V
+    - WMT
+    - PG
+    - JPM
+    - MA
+    - HD
+    - CVX
+    - PEP
+    - ABBV
+    - KO
+    - LLY
+    - MRK
+    - BAC
