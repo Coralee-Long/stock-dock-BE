@@ -25,12 +25,12 @@ public class HistoricalStockController {
     * @return List of HistoricalStock objects saved to the database.
     */
    @PostMapping("/fetch-and-save")
-   public List<HistoricalStock> fetchAndSaveHistoricalData(
+   public List<HistoricalStock> fetchAndSaveHistoricalDataForSymbol(
        @RequestParam String symbol,
        @RequestParam String startDate,
        @RequestParam String endDate
                                                           ) {
-      return historicalStockService.fetchAndSaveHistoricalData(symbol, startDate, endDate);
+      return historicalStockService.fetchAndSaveHistoricalDataForSymbol(symbol, startDate, endDate);
    }
 
    /**

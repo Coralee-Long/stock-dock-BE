@@ -184,7 +184,7 @@ public class GlobalExceptionHandler {
 Example for `HistoricalStockController`:
 ```java
 @PostMapping("/fetch-and-save")
-public List<HistoricalStock> fetchAndSaveHistoricalData(
+public List<HistoricalStock> fetchAndSaveHistoricalDataForSymbol(
     @RequestParam String symbol,
     @RequestParam String startDate,
     @RequestParam String endDate
@@ -195,7 +195,7 @@ public List<HistoricalStock> fetchAndSaveHistoricalData(
     if (LocalDate.parse(startDate).isAfter(LocalDate.parse(endDate))) {
         throw new InvalidDateRangeException("Start date must be before end date.");
     }
-    return historicalStockService.fetchAndSaveHistoricalData(symbol, startDate, endDate);
+    return historicalStockService.fetchAndSaveHistoricalDataForSymbol(symbol, startDate, endDate);
 }
 ```
 

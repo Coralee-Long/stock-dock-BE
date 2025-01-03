@@ -1,6 +1,7 @@
 package com.stockdock.services;
 
 import com.stockdock.clients.HistoricalStockClient;
+import com.stockdock.config.SymbolConfig;
 import com.stockdock.exceptions.InvalidDateRangeException;
 import com.stockdock.exceptions.InvalidSymbolException;
 import com.stockdock.models.HistoricalStock;
@@ -20,10 +21,14 @@ public class HistoricalStockService {
 
    private final HistoricalStockClient historicalStockClient;
    private final HistoricalStockRepo historicalStockRepo;
+   private final SymbolConfig symbolConfig; // Inject Symbols list
 
-   public HistoricalStockService(HistoricalStockClient historicalStockClient, HistoricalStockRepo historicalStockRepo) {
+   public HistoricalStockService(HistoricalStockClient historicalStockClient,
+                                 HistoricalStockRepo historicalStockRepo,
+                                 SymbolConfig symbolConfig) { // Include SymbolConfig in constructor
       this.historicalStockClient = historicalStockClient;
       this.historicalStockRepo = historicalStockRepo;
+      this.symbolConfig = symbolConfig; // Initialize SymbolConfig
    }
 
    /**
@@ -34,7 +39,7 @@ public class HistoricalStockService {
     * @param endDate   End date for historical data (YYYY-MM-DD).
     * @return A list of saved HistoricalStock objects.
     */
-   public List<HistoricalStock> fetchAndSaveHistoricalData(String symbol, String startDate, String endDate) {
+   public List<HistoricalStock> fetchAndSaveHistoricalDataForSymbol(String symbol, String startDate, String endDate) {
       // Validate input
       if (symbol == null || symbol.isBlank()) {
          throw new InvalidSymbolException("Symbol cannot be null or blank.");
@@ -58,6 +63,40 @@ public class HistoricalStockService {
       // Save historical data to MongoDB and return saved records
       return historicalStockRepo.saveAll(historicalData);
    }
+
+   /**
+    * Fetch and save historical stock data for all predefined symbols from the Alpaca API.
+    *
+    * This method iterates through all predefined stock symbols and fetches their historical data
+    * for the specified date range. The data is then saved to the MongoDB database.
+    *
+    * If an error occurs while fetching data for a particular symbol, it logs the error
+    * and continues with the next symbol.
+    *
+    * @param startDate Start date for historical data in YYYY-MM-DD format.
+    * @param endDate   End date for historical data in YYYY-MM-DD format.
+    */
+   public void fetchAndSaveHistoricalDataForAllSymbols(String startDate, String endDate) {
+      if (!isValidDateRange(startDate, endDate)) {
+         throw new InvalidDateRangeException("Invalid date range: Start date must be before end date.");
+      }
+
+      List<String> symbols = symbolConfig.getPredefined(); // Fetch predefined symbols from config
+
+      symbols.forEach(symbol -> {
+         try {
+            logger.info("Fetching historical data for symbol: {}", symbol);
+            fetchAndSaveHistoricalDataForSymbol(symbol, startDate, endDate);
+         } catch (InvalidSymbolException e) {
+            logger.warn("Invalid symbol encountered: {}", symbol, e);
+         } catch (InvalidDateRangeException e) {
+            logger.error("Invalid date range for symbol {}: {}", symbol, e.getMessage());
+         } catch (Exception e) {
+            logger.error("Unexpected error while fetching data for symbol {}: {}", symbol, e.getMessage());
+         }
+      });
+   }
+
 
    /**
     * Retrieve historical stock data from MongoDB for a specific stock symbol.
