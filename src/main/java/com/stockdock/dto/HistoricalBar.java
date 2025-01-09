@@ -1,14 +1,15 @@
 package com.stockdock.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 
 public record HistoricalBar(
-    @JsonProperty("t") Instant timestamp, // Timestamp for the bar
-    @JsonProperty("o") double open,       // Open price
-    @JsonProperty("c") double close,      // Close price
-    @JsonProperty("h") double high,       // High price
-    @JsonProperty("l") double low,        // Low price
-    @JsonProperty("v") long volume        // Trading volume
-) {
-}
+    double c,       // Close price
+    double h,       // High price
+    double l,       // Low price
+    int n,          // Number of trades
+    double o,       // Open price
+    Instant t,      // Timestamp
+    int v,          // Volume
+    double vw       // Volume-weighted average price
+) {}
+
